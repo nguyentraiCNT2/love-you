@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chúc mừng 8/3 - Em là vũ trụ của anh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    /* Background & sao */
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at center, #1a1a40 0%, #000033 70%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Roboto', sans-serif;
+      overflow: hidden;
+      perspective: 1200px;
+    }
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    /* Book container */
+    .book {
+      width: 90vw;
+      height: 80vh;
+      max-width: 1200px;
+      max-height: 800px;
+      position: relative;
+      transform-style: preserve-3d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border-radius: 10px;
+
+      padding: 10px;
+    }
+    .book::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 10px;
+      height: 100%;
+      background: linear-gradient(to right, #6B3A0F, #8B4513);
+      transform: translateX(-50%) rotateY(90deg);
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    /* Trang sách */
+    .page {
+      width: 50%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      background: #FDF5E6;
+      transform-origin: left;
+      transition: transform 1s ease-in-out;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0, 0, 0, 0.1);
+      border: 1px solid #D2B48C;
+      border-left: none;
+      border-radius: 0 10px 10px 0;
+      overflow: hidden;
+    }
+    .page-front, .page-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      padding: 40px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: #FDF5E6;
+      border-radius: 0 10px 10px 0;
+    }
+    .page-front {
+      z-index: 2;
+    }
+    .page-back {
+      transform: rotateY(180deg);
+    }
+    .page h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 36px;
+      margin: 0;
+      color: #8B4513;
+      text-shadow: 0 1px 3px rgba(139, 69, 19, 0.2);
+    }
+    .page p {
+      font-size: 20px;
+      margin: 20px 0;
+      color: #5C4033;
+      font-style: italic;
+      max-width: 80%;
+    }
+    /* Nút điều hướng */
+    .nav {
+      position: fixed;
+      bottom: 30px;
+      width: 90vw;
+      max-width: 1200px;
+      text-align: center;
+      z-index: 10;
+    }
+    .nav button {
+      padding: 12px 30px;
+      background: #8B4513;
+      border: none;
+      border-radius: 30px;
+      font-size: 20px;
+      color: #fff;
+      cursor: pointer;
+      margin: 0 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
+    }
+    .nav button:hover {
+      background: #A0522D;
+      transform: translateY(-3px);
+    }
+    .nav button:disabled {
+      background: #A9A9A9;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    /* Hiệu ứng hoa nở */
+    .heart-flower {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      filter: drop-shadow(0 0 10px rgba(255,182,193,0.8));
+    }
+    /* Tâm hoa */
+    .heart-flower::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle at center, #fff, #FF69B4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 15px rgba(255,105,180,0.7);
+    }
+    /* Cánh hoa */
+    .petal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50px;
+      height: 80px;
+      background: radial-gradient(circle at top, #FFB6C1, #FF69B4);
+      border-radius: 50% 50% 0 0;
+      transform-origin: bottom center;
+      opacity: 0;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+    /* Khi trang hoa kích hoạt, chạy animation bloom */
+    #flowerPage.active .petal {
+      animation: bloom 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    }
+    @keyframes bloom {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateY(0) scale(0);
+      }
+      60% {
+        opacity: 1;
+        transform: rotate(var(--angle)) translateY(calc(-1.2 * var(--distance))) scale(1.2);
+      }
+      100% {
+        opacity: 1;
+        transform: rotate(var(--angle)) translateY(calc(-1 * var(--distance))) scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="book" id="book">
+    <!-- Trang 1 -->
+    <div class="page" style="z-index: 5;">
+      <div class="page-front">
+        <h1>Chúc mừng 8/3, em yêu!</h1>
+        <p>
+          Chúc mừng ngày Quốc tế Phụ nữ 8/3! Em không chỉ là vũ trụ của anh mà còn là nguồn cảm hứng bất tận, ánh sáng dẫn lối trong cuộc sống anh.
+        </p>
+      </div>
+    </div>
+    <!-- Trang 2 -->
+    <div class="page" style="z-index:4;">
+      <div class="page-front">
+        <h1>Lần đầu gặp em</h1>
+        <p>
+          Kể từ khoảnh khắc đầu tiên gặp em, anh cảm nhận được một sự kết nối đặc biệt, như Trái Đất tìm thấy Mặt Trời. Em là người mang lại nhiệt huyết và hạnh phúc cho cuộc đời anh.
+        </p>
+      </div>
+    </div>
+    <!-- Trang 3 -->
+    <div class="page" style="z-index: 3;">
+      <div class="page-front">
+        <h1>Điều anh yêu nhất</h1>
+        <p>
+          Điều anh yêu nhất ở em không chỉ là nụ cười rạng rỡ hay ánh mắt dịu dàng, mà còn là cách em làm cho mọi khoảnh khắc trở nên ý nghĩa và làm trái tim anh đập nhanh hơn mỗi khi gần bên em.
+        </p>
+      </div>
+    </div>
+    <!-- Trang 4 -->
+    <div class="page" style="z-index: 2;">
+      <div class="page-front">
+        <h1>Lời chúc 8/3</h1>
+        <p>
+          Nhân ngày 8/3, anh chúc em luôn được bao bọc bởi niềm vui, tình yêu và những ước mơ ngọt ngào. Mong em mãi tỏa sáng như ngôi sao lấp lánh trên bầu trời của đời anh.
+        </p>
+      </div>
+    </div>
+    <!-- Trang 5 -->
+    <div class="page" style="z-index: 1;">
+      <div class="page-front">
+        <h1>Mở để xem điều bất ngờ</h1>
+        <p>
+          Hãy mở trang này để khám phá bất ngờ mà anh đã dày công chuẩn bị, như một lời nhắc rằng mỗi ngày bên em đều là một món quà vô giá.
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <div class="nav">
+    <button id="prevBtn" onclick="prevPage()" disabled>Trước</button>
+    <button id="nextBtn" onclick="nextPage()">Tiếp</button>
+  </div>
+  <script>
+    let currentPage = 0;
+    const pages = document.querySelectorAll('.page');
+    const totalPages = pages.length;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const flowerPage = document.getElementById('flowerPage');
+
+    function updateBook() {
+      pages.forEach((page, index) => {
+        if (index < currentPage) {
+          page.style.transform = 'rotateY(-180deg) translateX(-100%)';
+        } else {
+          page.style.transform = 'rotateY(0deg)';
+        }
+        page.style.zIndex = totalPages - Math.abs(currentPage - index);
+      });
+
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === totalPages;
+
+      // Nếu không phải trang cuối, reset animation của hoa
+      if (currentPage !== totalPages - 1) {
+        flowerPage.classList.remove('active');
+        const petals = flowerPage.querySelectorAll('.petal');
+        petals.forEach(petal => {
+          petal.style.animation = 'none';
+        });
+      } else {
+        flowerPage.classList.add('active');
+        const petals = flowerPage.querySelectorAll('.petal');
+        petals.forEach(petal => {
+          petal.style.animation = '';
+        });
+      }
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        updateBook();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        updateBook();
+      }
+    }
+
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
+      }
+    }
+
+    createStars();
+    updateBook();
+  </script>
+</body>
+</html>
